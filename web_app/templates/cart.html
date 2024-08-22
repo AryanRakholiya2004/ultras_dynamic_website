@@ -1,0 +1,474 @@
+{% include 'web_header.html' %}
+{% load static %}
+        <nav class="primary-nav padding-small">
+          <div class="container">
+            <div class="row d-flex align-items-center">
+              <div class="col-lg-2 col-md-2">
+                <div class="main-logo">
+                  <a href="/">
+                    <img src="{% static 'images/main-logo.png' %}" alt="logo">
+                  </a>
+                </div>
+              </div>
+              <div class="col-lg-10 col-md-10">
+                <div class="navbar">
+
+                  <div id="main-nav" class="stellarnav d-flex justify-content-end right">
+                    <ul class="menu-list">
+
+                      <li class="menu-item has-sub">
+                        <a href="/" class="item-anchor d-flex align-item-center" data-effect="Home">Home<i class="icon icon-chevron-down"></i></a>
+                        <ul class="submenu">
+                          <li><a href="/" class="item-anchor">Home</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a href="/about" class="item-anchor" data-effect="About">About</a></li>
+
+                      <li class="menu-item has-sub">
+                        <a href="/shop" class="item-anchor d-flex align-item-center" data-effect="Shop">Shop<i class="icon icon-chevron-down"></i></a>
+                        <ul class="submenu">
+                          <li><a href="/shop" class="item-anchor">Shop</a></li>
+                        </ul>
+                      </li>
+
+                      <li class="menu-item has-sub">
+                        <a href="#" class="item-anchor d-flex align-item-center" data-effect="Pages">Pages<i class="icon icon-chevron-down"></i></a>
+                        <ul class="submenu">
+                          <li><a href="" class="item-anchor">Styles</a></li>
+                          <li><a href="/" class="item-anchor">Thankyou</a></li>
+                        </ul>
+                      </li>
+
+                      <li class="menu-item has-sub">
+                        <a href="/blog" class="item-anchor d-flex align-item-center" data-effect="Blog">Blog<i class="icon icon-chevron-down"></i></a>
+                        <ul class="submenu">
+                          <li><a href="/blog" class="item-anchor">Blog</a></li>
+                          <li><a href="/single-post" class="item-anchor active">Single post</a></li>
+                        </ul>
+                      </li>
+
+                      <li><a href="/contact" class="item-anchor" data-effect="Contact">Contact</a></li>
+
+                    </ul>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+  <section class="site-banner padding-small bg-light-grey">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="breadcrumbs">
+            <span class="item">
+              <a href="/">Home /</a>
+            </span>
+            <span class="item">
+              <a href="/shop">Shop /</a>
+            </span>
+            <span class="item">Cart</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shopify-cart padding-large" onloadpage="qt_tot()">
+    <form method="POST" name="main_form">
+      {% csrf_token %}
+    <div class="container">
+
+
+        <div class="row d-flex justify-content-center">
+          <table class="cart-table col-12" style="width: 80%;">
+            <tr class="row" align="center">
+              <th style="text-align: center;">Product</th>
+              <th style="text-align: left;">Quantity</th>
+              <th style="text-align: center;">Unit Price</th>
+              <th style="text-align: center;">Total</th>
+              <th></th>
+            </tr>
+
+            {% for data in cart %}
+            {% for row in pro %}
+            {% if data.product_id_id == row.id %}
+
+      <input type="hidden" name="pro_id{{ data.id }}" value="{{ data.id }}">
+            
+      <!-- <form method="POST" name="main{{ data.id }}"> -->
+      <form method="POST" name="main{{ data.id }}">
+
+        {% csrf_token %}
+
+          <input type="hidden" name="{{ frm.amount.name }}" class="amount">
+          <input type="hidden" name="{{ frm.price.name }}" value="{{ row.price }}">
+          <input type="hidden" name="id" value="{{ data.id }}">
+          <input type="hidden" name="{{ frm.user_id.name }}" value="{{ uid }}">
+          <input type="hidden" name="{{ frm.product_id.name }}" value="{{ data.product_id_id }}">
+
+            <tr>
+              <td style="text-align: center;" style="width: 250px;"><img src="../../media/{{ row.image }}" alt="image" style="width: 250px; height: 250px; object-fit: cover;"></td>
+              <td>
+                <div class="qty-number d-flex align-items-center justify-content-start">
+                  <button type="submit" name="save" class="decrement-button" onclick="decreaseValue('{{ data.id }}'),chvalue('{{ data.id }}')">-</button>
+                  <input type="text" id="number{{ data.id }}" name="{{ frm.qty.name }}" value="{{ data.qty }}" class="quantity" class="spin-number-output" value="1" min="1" max="{{ row.qty }}">
+                  <button type="submit" name="save" class="increment-button" onclick="increaseValue('{{ data.id }}'),chvalue('{{ data.id }}')">+</button>
+                </div>
+              </td>
+              <td style="text-align: center;">₹ <span id="uprice{{ data.id }}" class="price">{{ row.price }}</span></td>
+              <td style="text-align: center;">₹ <span id="tprice{{ data.id }}" class="products">{{ data.amount }}</span></td>
+              <td style="text-align: center;">
+                <a href="/del_cart/{{ data.id }}"><i class="icon icon-close"></i></a>
+              </td>
+            </tr>
+            
+      </form>
+
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+
+          </table>
+        </div>
+      <div class="cart-totals">
+        <h2 class="section-title">Cart Totals</h2>
+        <div class="total-price">
+          <table cellspacing="0" class="table">
+            <tbody>
+              <!-- <tr class="subtotal">
+                <th>Subtotal</th>
+                <td data-title="Subtotal">
+                  <span class="price-amount amount text-primary">
+                    <bdi>
+                      <span class="price-currency-symbol">₹</span>00.00
+                    </bdi>
+                  </span>
+                </td>
+              </tr> -->
+              <tr class="order-total">
+                <th>Total</th>
+                <td data-title="Total">
+                  <span class="price-amount amount text-primary">
+                    <bdi>
+                      <span>₹</span>
+                      <span class="price-currency-symbol" id="total">--</span></bdi>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        
+        <div class="button-wrap">
+          <!-- <a href="/cart"><button class="btn btn-dark btn-medium">Update Cart</button></a> -->
+          <button class="btn btn-dark btn-medium">Update Cart</button>
+          <a href="/shop"><button class="btn btn-dark btn-medium">Continue Shopping</button></a>
+          <button type="submit" name="checkout" class="btn btn-dark btn-medium">Proceed to checkout</button>
+        </div>
+      </div>
+    </div>
+  </form>
+  </section>
+
+  <section id="subscribe" class="bg-light-grey padding-large">
+    <div class="container">
+      <div class="row">
+        <div class="block-text col-md-6">
+          <div class="section-header">
+            <h2 class="section-title">Get 25% off Discount Coupons</h2>
+          </div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dictumst amet, metus, sit massa posuere maecenas.
+            At tellus ut nunc amet vel egestas.</p>
+        </div>
+        <div class="subscribe-content col-md-6">
+          <form id="form" class="d-flex justify-content-between">
+            <input type="text" name="email" placeholder="Enter your email addresss here">
+            <button class="btn btn-dark">Subscribe Now</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="instagram" class="padding-large">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Follow our instagram</h2>
+      </div>
+      <p>Our official Instagram account <a href="#">@ultras</a> or <a href="#">#ultras_clothing</a>
+      </p>
+      <div class="row d-flex flex-wrap justify-content-between">
+        <div class="col-lg-2 col-md-4 col-sm-6">
+          <figure class="zoom-effect">
+            <img src="{% static 'images/insta-image1.jpg' %}" alt="instagram" class="insta-image">
+            <i class="icon icon-instagram"></i>
+          </figure>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+          <figure class="zoom-effect">
+            <img src="{% static 'images/insta-image2.jpg' %}" alt="instagram" class="insta-image">
+            <i class="icon icon-instagram"></i>
+          </figure>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+          <figure class="zoom-effect">
+            <img src="{% static 'images/insta-image3.jpg' %}" alt="instagram" class="insta-image">
+            <i class="icon icon-instagram"></i>
+          </figure>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+          <figure class="zoom-effect">
+            <img src="{% static 'images/insta-image4.jpg' %}" alt="instagram" class="insta-image">
+            <i class="icon icon-instagram"></i>
+          </figure>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+          <figure class="zoom-effect">
+            <img src="{% static 'images/insta-image5.jpg' %}" alt="instagram" class="insta-image">
+            <i class="icon icon-instagram"></i>
+          </figure>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+          <figure class="zoom-effect">
+            <img src="{% static 'images/insta-image6.jpg' %}" alt="instagram" class="insta-image">
+            <i class="icon icon-instagram"></i>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shipping-information">
+    <hr>
+    <div class="container">
+      <div class="row d-flex flex-wrap align-items-center justify-content-between">
+        <div class="col-md-3 col-sm-6">
+          <div class="icon-box">
+            <i class="icon icon-truck"></i>
+            <h4 class="block-title">
+              <strong>Free shipping</strong> Over $200
+            </h4>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="icon-box">
+            <i class="icon icon-return"></i>
+            <h4 class="block-title">
+              <strong>Money back</strong> Return within 7 days
+            </h4>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="icon-box">
+            <i class="icon icon-tags1"></i>
+            <h4 class="block-title">
+              <strong>Buy 4 get 5th</strong> 50% off
+            </h4>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+          <div class="icon-box">
+            <i class="icon icon-help_outline"></i>
+            <h4 class="block-title">
+              <strong>Any questions?</strong> experts are ready
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+  </section>
+
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-menu-list">
+        <div class="row d-flex flex-wrap justify-content-between">
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="footer-menu">
+              <h5 class="widget-title">Ultras</h5>
+              <ul class="menu-list list-unstyled">
+                <li class="menu-item">
+                  <a href="/about">About us</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Conditions </a>
+                </li>
+                <li class="menu-item">
+                  <a href="/blog">Our Journals</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Careers</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Affiliate Programme</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Ultras Press</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="footer-menu">
+              <h5 class="widget-title">Customer Service</h5>
+              <ul class="menu-list list-unstyled">
+                <li class="menu-item">
+                  <a href="faqs.html">FAQ</a>
+                </li>
+                <li class="menu-item">
+                  <a href="/contact">Contact</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Privacy Policy</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Returns & Refunds</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Cookie Guidelines</a>
+                </li>
+                <li class="menu-item">
+                  <a href="#">Delivery Information</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="footer-menu">
+              <h5 class="widget-title">Contact Us</h5>
+              <p>Do you have any questions or suggestions? <a href="#" class="email">ourservices@ultras.com</a>
+              </p>
+              <p>Do you need assistance? Give us a call. <br>
+                <strong>+57 444 11 00 35</strong>
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="footer-menu">
+              <h5 class="widget-title">Forever 2018</h5>
+              <p>Cras mattis sit ornare in metus eu amet adipiscing enim. Ullamcorper in orci, ultrices integer eget
+                arcu. Consectetur leo dignissim lacus, lacus sagittis dictumst.</p>
+              <div class="social-links">
+                <ul class="d-flex list-unstyled">
+                  <li>
+                    <a href="#">
+                      <i class="icon icon-facebook"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="icon icon-twitter"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="icon icon-youtube-play"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <i class="icon icon-behance-square"></i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+  </footer>
+
+  <div id="footer-bottom">
+    <div class="container">
+      <div class="d-flex align-items-center flex-wrap justify-content-between">
+        <div class="copyright">
+          <p>Freebies by <a href="https://templatesjungle.com/">Templates Jungle</a> Distributed by <a href="https://themewagon.com">ThemeWagon</a>
+          </p>
+        </div>
+        <div class="payment-method">
+          <p>Payment options :</p>
+          <div class="card-wrap">
+            <img src="{% static 'images/visa-icon.jpg' %}" alt="visa">
+            <img src="{% static 'images/mastercard.png' %}" alt="mastercard">
+            <img src="{% static 'images/american-express.jpg' %}" alt="american-express">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+  <script src="{% static 'js/plugins.js' %}"></script>
+  <script src="{% static 'js/script.js' %}"></script>
+
+  <script>
+
+function increaseValue(num) {
+  var value = parseInt(document.getElementById('number'+num).value, 10);
+  value = isNaN(value) ? 0 : value;
+  value++;
+  document.getElementById('number'+num).value = value;
+}
+
+function decreaseValue(num) {
+  var value = parseInt(document.getElementById('number'+num).value, 10);
+  value = isNaN(value) ? 0 : value;
+  value < 1 ? value = 1 : '';
+  value--;
+  document.getElementById('number'+num).value = value;
+}
+
+function chvalue(num)
+{
+  var qt = parseInt(document.getElementById('number'+num).value, 10);
+  var price = parseInt(document.getElementById('uprice'+num).innerHTML, 10);
+  var total = 0;
+  pro_total = qt * price;
+  document.getElementById('tprice'+num).innerHTML = pro_total;
+  pro_tot()
+  // document.getElementById("total").innerHTML = total;
+}
+function pro_tot()
+{
+  var products = document.getElementsByClassName('products');
+  var total = 0;
+  
+  for (let i = 0; i < products.length; i++) 
+  {
+    //var price = parseInt(products[i].getElementById('tprice')[0].innerHTML);
+    var tot = products[i].innerHTML;
+    total += parseInt(tot);
+  }
+  
+  document.getElementById("total").innerHTML = parseInt(total);
+  
+}
+function qt_tot()
+{
+  // alert()
+  var price = document.getElementsByClassName('price');
+  var products = document.getElementsByClassName('products');
+  var quantity = document.getElementsByClassName('quantity');
+  var am = document.getElementsByClassName('amount');
+  var total = 0
+  for (let i =0 ; i < products.length; i++)
+  {
+    am[i].value = products[i].innerHTML = parseInt(price[i].innerHTML) * parseInt(quantity[i].value)
+    // alert(products[i].value)
+  }
+  pro_tot();
+}
+window.onload = qt_tot()
+  </script>
+
+</body>
+</html>
